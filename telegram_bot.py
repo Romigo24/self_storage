@@ -123,7 +123,7 @@ async def rules(update: Update, context: CallbackContext):
 """
     await context.bot.send_message(chat_id=query.message.chat.id, text=text, reply_markup=reply_markup)
 
-@sync_to_async
+
 async def make_order(update: Update, context: CallbackContext):
     query = update.callback_query
     await query.answer()
@@ -148,7 +148,7 @@ async def make_order(update: Update, context: CallbackContext):
     reply_markup = InlineKeyboardMarkup(keyboard)
     await context.bot.send_message(chat_id=query.message.chat.id, text=text, reply_markup=reply_markup)
 
-@sync_to_async
+
 async def check_client(update: Update, context: CallbackContext):
     query = update.callback_query
     await query.answer()
@@ -188,7 +188,7 @@ async def count_clicks(update: Update, context: CallbackContext):
         await query.message.reply_text('У вас нет доступа к этой функции')
     main_menu(update, context)
 
-@sync_to_async
+
 async def show_expired_orders(update: Update, context: CallbackContext):
     query = update.callback_query
     await query.answer()
@@ -231,14 +231,14 @@ async def create_qr_code(data):
     output.seek(0)
     return output
 
-@sync_to_async
+
 async def get_qr_code(update: Update, context: CallbackContext):
     query = update.callback_query
     await query.answer()
 
     user_id = update.effective_user.id
     try:
-        client = await Clients.objects.get(telegram_id=user_id)
+        client = await get_client(user_id)
     except Clients.DoesNotExist:
         await query.message.reply_text("Вы не зарегистрированы как клиент.")
         return main_menu(update, context)
@@ -266,6 +266,9 @@ async def start_name_input(update: Update, context: CallbackContext):
 
     return NAME
 
+@sync_to_async
+def get_client(telegram_id):
+    return Clients.objects.get(telegram_id=telegram_id)
 
 async def name_input(update: Update, context: CallbackContext):
     user_name = update.message.text
