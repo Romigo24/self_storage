@@ -45,18 +45,18 @@ def start(update: Update, context: CallbackContext):
 
 def consent_personal_data(update: Update, context: CallbackContext):
     query = update.callback_query
-    query.answer()
+    await query.answer()
 
     text = "Для дальнейшей работы необходимо ознакомится с согласием на обработку персональных данных"
     keyboard = [[InlineKeyboardButton("Ознакомится с согласием на обработку персональных данных", callback_data='send_consents')]]
     reply_markup = InlineKeyboardMarkup(keyboard)
 
-    context.bot.send_message(chat_id=query.message.chat.id, text=text, reply_markup=reply_markup)
+    await context.bot.send_message(chat_id=query.message.chat.id, text=text, reply_markup=reply_markup)
 
 
 def send_consents(update: Update, context: CallbackContext):
     query = update.callback_query
-    query.answer()
+    await query.answer()
 
     file_path = 'files/consents.pdf'
     context.bot.send_document(chat_id=query.message.chat.id, document=open(file_path, 'rb'), caption="Вот ваше соглашение на обработку персональных данных.")
@@ -64,12 +64,12 @@ def send_consents(update: Update, context: CallbackContext):
     keyboard = [[InlineKeyboardButton("Перейти в главное меню", callback_data='main_menu')]]
     reply_markup = InlineKeyboardMarkup(keyboard)
     text = 'Теперь вы можете начинать работу'
-    context.bot.send_message(chat_id=query.message.chat.id, text=text, reply_markup=reply_markup)
+    await context.bot.send_message(chat_id=query.message.chat.id, text=text, reply_markup=reply_markup)
 
 
 def main_menu(update: Update, context: CallbackContext):
     query = update.callback_query
-    query.answer()
+    await query.answer()
 
     keyboard = [[InlineKeyboardButton("Правила хранения", callback_data='rules')],
                 [InlineKeyboardButton("Сделать заказ", callback_data='make_order')],
@@ -81,12 +81,12 @@ def main_menu(update: Update, context: CallbackContext):
 
     reply_markup = InlineKeyboardMarkup(keyboard)
     text = 'Это главное меню'
-    context.bot.send_message(chat_id=query.message.chat.id, text=text, reply_markup=reply_markup)
+    await context.bot.send_message(chat_id=query.message.chat.id, text=text, reply_markup=reply_markup)
 
 
 def tariffs(update: Update, context: CallbackContext):
     query = update.callback_query
-    query.answer()
+    await query.answer()
 
     tariffs_message = (
         'Тарифы аренды бокса:\n'
@@ -94,12 +94,12 @@ def tariffs(update: Update, context: CallbackContext):
         '2. 1-5 м³: 300 р./день\n'
         '3. Более 5 м³: 500 р./день\n'
     )
-    query.message.reply_text(tariffs_message)
+    await query.message.reply_text(tariffs_message)
     main_menu(update, context)
 
 def rules(update: Update, context: CallbackContext):
     query = update.callback_query
-    query.answer()
+    await query.answer()
 
     keyboard = [[InlineKeyboardButton("Перейти в главное меню", callback_data='main_menu')]]
     reply_markup = InlineKeyboardMarkup(keyboard)
@@ -120,12 +120,12 @@ def rules(update: Update, context: CallbackContext):
 - Легковоспламеняющиеся материалы
 - Ценные предметы (драгоценности, деньги) без предварительного уведомления
 """
-    context.bot.send_message(chat_id=query.message.chat.id, text=text, reply_markup=reply_markup)
+    await context.bot.send_message(chat_id=query.message.chat.id, text=text, reply_markup=reply_markup)
 
 
 def make_order(update: Update, context: CallbackContext):
     query = update.callback_query
-    query.answer()
+    await query.answer()
 
     warehouses = Warehouse.objects.all()
     addresses = [warehouse.address for warehouse in warehouses]
@@ -145,28 +145,28 @@ def make_order(update: Update, context: CallbackContext):
     ]
 
     reply_markup = InlineKeyboardMarkup(keyboard)
-    context.bot.send_message(chat_id=query.message.chat.id, text=text, reply_markup=reply_markup)
+    await context.bot.send_message(chat_id=query.message.chat.id, text=text, reply_markup=reply_markup)
 
 
 def check_client(update: Update, context: CallbackContext):
     query = update.callback_query
-    query.answer()
+    await query.answer()
     telegram_id = query.from_user.id
     client = Clients.objects.filter(telegram_id=telegram_id).first()
 
     if client is None:
         text = 'Сначала давайте зарегестрируем вас в нашей системе'
-        context.bot.send_message(chat_id=query.message.chat.id, text=text)
+        await context.bot.send_message(chat_id=query.message.chat.id, text=text)
         start_name_input(update, context)
     else:
         text = 'Вы уже зарегистрированы, это хорошо)'
-        context.bot.send_message(chat_id=query.message.chat.id, text=text)
+        await context.bot.send_message(chat_id=query.message.chat.id, text=text)
         address_input(update, context)
 
 
 def count_clicks(update: Update, context: CallbackContext):
     query = update.callback_query
-    query.answer()
+    await query.answer()
 
     if update.effective_user.id == int(os.environ['OWNER_ID']):
         VK_API_KEY = os.environ['VK_API_KEY']
@@ -182,14 +182,14 @@ def count_clicks(update: Update, context: CallbackContext):
         response = requests.get(url, params)
         response.raise_for_status()
         number_of_clicks = response.json()['response']['stats'][0]['views']
-        query.message.reply_text(f'По вашей ссылке перешли {number_of_clicks} раз')
+        await query.message.reply_text(f'По вашей ссылке перешли {number_of_clicks} раз')
     else:
-        query.message.reply_text('У вас нет доступа к этой функции')
+        await query.message.reply_text('У вас нет доступа к этой функции')
     main_menu(update, context)
 
 def show_expired_orders(update: Update, context: CallbackContext):
     query = update.callback_query
-    query.answer()
+    await query.answer()
 
     if update.effective_user.id == int(os.environ['OWNER_ID']):
         current_date = timezone.now()
@@ -197,7 +197,7 @@ def show_expired_orders(update: Update, context: CallbackContext):
 
         if not expired_orders.exists():
             chat_id = update.effective_chat.id
-            context.bot.send_message(chat_id=chat_id, text='Нет просроченных заказов')
+            await context.bot.send_message(chat_id=chat_id, text='Нет просроченных заказов')
             return main_menu(update, context)
 
         message = "Просроченные заказы:\n"
@@ -207,10 +207,10 @@ def show_expired_orders(update: Update, context: CallbackContext):
                         f"Номер телефона: {order.user.phone_number}\n"
                         f"(Срок: {order.expires_at.strftime('%d.%m.%Y')})\n\n")
 
-        query.message.reply_text(message)
+        await query.message.reply_text(message)
 
     else:
-        query.message.reply_text('У вас нет доступа к этой функции')
+        await query.message.reply_text('У вас нет доступа к этой функции')
     main_menu(update, context)
 
 def create_qr_code(data):
@@ -231,26 +231,26 @@ def create_qr_code(data):
 
 def get_qr_code(update: Update, context: CallbackContext):
     query = update.callback_query
-    query.answer()
+    await query.answer()
 
     user_id = query.from_user.id
     try:
         client = Clients.objects.get(telegram_id=user_id)
     except Clients.DoesNotExist:
-        query.message.reply_text("Вы не зарегистрированы как клиент.")
+        await query.message.reply_text("Вы не зарегистрированы как клиент.")
         return main_menu(update, context)
     
     orders = Order.objects.filter(user=client, status__in=['NEW', 'STORED', 'EXPIRED'])
 
     if not orders.exists():
-        query.message.reply_text("У вас нет активного заказа")
+        await query.message.reply_text("У вас нет активного заказа")
         return main_menu(update, context)
     
     for order in orders:
         qr_data = f"Order ID: {order.id}, Volume: {order.volume}, Address: {order.address_from}"
         qr_image = create_qr_code(qr_data)
-        query.message.reply_photo(photo=qr_image, caption='Ваш QR-код')
-        query.message.reply_text(text='Ваш заказ завершен.')
+        await query.message.reply_photo(photo=qr_image, caption='Ваш QR-код')
+        await query.message.reply_text(text='Ваш заказ завершен.')
         order.status = 'COMPLETED'
         order.save()
     main_menu(update, context)
@@ -259,7 +259,7 @@ def get_qr_code(update: Update, context: CallbackContext):
 def start_name_input(update: Update, context: CallbackContext):
     chat_id = update.callback_query.message.chat.id
     text = 'Пожалуйста введите ваше ФИО'
-    context.bot.send_message(chat_id=chat_id, text=text)
+    await context.bot.send_message(chat_id=chat_id, text=text)
 
     return NAME
 
@@ -271,7 +271,7 @@ def name_input(update: Update, context: CallbackContext):
     context.user_data['tg_id'] = str(update.message.from_user.id)
     context.user_data['name'] = user_name
 
-    context.bot.send_message(chat_id=chat_id, text='Пожалуйста, введите ваш номер телефона.')
+    await context.bot.send_message(chat_id=chat_id, text='Пожалуйста, введите ваш номер телефона.')
     return PHONE
 
 
@@ -280,7 +280,7 @@ def phone_input(update: Update, context: CallbackContext):
     chat_id = update.message.chat.id
 
     context.user_data['phone'] = user_phone
-    context.bot.send_message(chat_id=chat_id, text='Пожалуйста, введите ваш email')
+    await context.bot.send_message(chat_id=chat_id, text='Пожалуйста, введите ваш email')
 
     return EMAIL
 
@@ -313,7 +313,7 @@ def check_personal_data(update: Update, context: CallbackContext):
     ]
 
     reply_markup = InlineKeyboardMarkup(keyboard)
-    context.bot.send_message(chat_id=chat_id, text=text, reply_markup=reply_markup)
+    await context.bot.send_message(chat_id=chat_id, text=text, reply_markup=reply_markup)
 
 
 def save_personal_data(update: Update, context: CallbackContext):
@@ -323,7 +323,7 @@ def save_personal_data(update: Update, context: CallbackContext):
     user_email = context.user_data.get('email')
 
     if not all([user_name, user_phone, user_telegram_id]):
-        context.bot.send_message(chat_id=update.effective_chat.id, text='Пожалуйста, предоставьте все обязательные данные: имя или телефон')
+        await context.bot.send_message(chat_id=update.effective_chat.id, text='Пожалуйста, предоставьте все обязательные данные: имя или телефон')
         return main_menu(update, context)    
 
     client = Clients(
@@ -342,7 +342,7 @@ def address_input(update: Update, context: CallbackContext):
     keyboard = [[InlineKeyboardButton("Главное меню", callback_data='main_menu')]]
     reply_markup = InlineKeyboardMarkup(keyboard)
     text = 'Тут будет что-то по регистрации заказа'
-    context.bot.send_message(chat_id=chat_id, text=text, reply_markup=reply_markup)
+    await context.bot.send_message(chat_id=chat_id, text=text, reply_markup=reply_markup)
 
 
 def main():
