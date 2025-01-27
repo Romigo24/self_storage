@@ -354,9 +354,9 @@ def main():
     conv_handler = ConversationHandler(
         entry_points=[CallbackQueryHandler(start_name_input, pattern='free_delivery')],
         states={
-            NAME: [MessageHandler(Filters.text & ~Filters.command, name_input)],
-            PHONE: [MessageHandler(Filters.text & ~Filters.command, phone_input)],
-            EMAIL: [MessageHandler(Filters.text & ~Filters.command, email_input)],
+            NAME: [MessageHandler(filters.text & ~filters.command, name_input)],
+            PHONE: [MessageHandler(filters.text & ~filters.command, phone_input)],
+            EMAIL: [MessageHandler(filters.text & ~filters.command, email_input)],
         },
                 fallbacks=[CallbackQueryHandler(main_menu, pattern='main_menu')]
     )
@@ -378,8 +378,8 @@ def main():
     
 
 
-    updater.start_polling()
-    updater.idle()
+    dp.start_polling()
+    dp.idle()
 
 
 if __name__ == '__main__':
