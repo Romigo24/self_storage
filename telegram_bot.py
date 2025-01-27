@@ -4,6 +4,7 @@ import django
 from django.utils import timezone
 import requests
 import qrcode
+from asgiref.sync import sync_to_async
 from io import BytesIO
 from urllib.parse import urlparse
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
@@ -122,7 +123,7 @@ async def rules(update: Update, context: CallbackContext):
 """
     await context.bot.send_message(chat_id=query.message.chat.id, text=text, reply_markup=reply_markup)
 
-
+@sync_to_async
 async def make_order(update: Update, context: CallbackContext):
     query = update.callback_query
     await query.answer()
@@ -147,7 +148,7 @@ async def make_order(update: Update, context: CallbackContext):
     reply_markup = InlineKeyboardMarkup(keyboard)
     await context.bot.send_message(chat_id=query.message.chat.id, text=text, reply_markup=reply_markup)
 
-
+@sync_to_async
 async def check_client(update: Update, context: CallbackContext):
     query = update.callback_query
     await query.answer()
@@ -187,13 +188,14 @@ async def count_clicks(update: Update, context: CallbackContext):
         await query.message.reply_text('У вас нет доступа к этой функции')
     main_menu(update, context)
 
+@sync_to_async
 async def show_expired_orders(update: Update, context: CallbackContext):
     query = update.callback_query
     await query.answer()
 
     if update.effective_user.id == int(os.environ['OWNER_ID']):
         current_date = timezone.now()
-        expired_orders = Order.objects.filter(expires_at__lt=current_date, status='EXPIRED')
+        expired_orders = await Order.objects.filter(expires_at__lt=current_date, status='EXPIRED')
 
         if not expired_orders.exists():
             chat_id = update.effective_chat.id
@@ -229,19 +231,19 @@ async def create_qr_code(data):
     output.seek(0)
     return output
 
-
+@sync_to_async
 async def get_qr_code(update: Update, context: CallbackContext):
     query = update.callback_query
     await query.answer()
 
     user_id = update.effective_user.id
     try:
-        client = Clients.objects.get(telegram_id=user_id)
+        client = await Clients.objects.get(telegram_id=user_id)
     except Clients.DoesNotExist:
         await query.message.reply_text("Вы не зарегистрированы как клиент.")
         return main_menu(update, context)
     
-    orders = Order.objects.filter(user=client, status__in=['NEW', 'STORED', 'EXPIRED'])
+    orders = await Order.objects.filter(user=client, status__in=['NEW', 'STORED', 'EXPIRED'])
 
     if not orders.exists():
         await query.message.reply_text("У вас нет активного заказа")
