@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import *
-
+from django.utils.html import format_html
 
 @admin.register(Warehouse)
 class WarehouseAdmin(admin.ModelAdmin):
@@ -58,3 +58,14 @@ class OrdersAdmin(admin.ModelAdmin):
         return obj.warehouse.address
     warehouse_address.short_description = 'Адрес склада'
 
+class OrderAdmin(admin.ModelAdmin):
+    list_display = ('user', 'volume', 'created_at', 'expires_at', 'status', 'get_order_status', 'final_price')
+
+    def get_order_status(self, obj):
+        if obj.is_overdue():
+            return format_html('<span style="color: red; font-weight: bold;">Просрочен</span>')
+        return format_html('<span style="color: green;">В срок</span>')
+
+    get_order_status.short_description = 'Статус'
+
+admin.site.register(Order, OrderAdmin)
