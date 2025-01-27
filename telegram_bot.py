@@ -7,7 +7,7 @@ import qrcode
 from io import BytesIO
 from urllib.parse import urlparse
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import Updater, CommandHandler, CallbackContext, CallbackQueryHandler, ConversationHandler, MessageHandler, Filters
+from telegram.ext import Updater, CommandHandler, CallbackContext, CallbackQueryHandler, ConversationHandler, MessageHandler
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'self_storage.settings')
 django.setup()
