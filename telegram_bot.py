@@ -198,8 +198,7 @@ async def show_expired_orders(update: Update, context: CallbackContext):
         expired_orders = await get_order(current_date)
 
         if not expired_orders.exists():
-            chat_id = update.effective_chat.id
-            await context.bot.send_message(chat_id=update.effective_chat.id, text='Нет просроченных заказов')
+            await context.bot.send_message(chat_id=update.effective_chat.id, text="Нет просроченных заказов.")
             return main_menu(update, context)
 
         message = "Просроченные заказы:\n"
@@ -212,7 +211,7 @@ async def show_expired_orders(update: Update, context: CallbackContext):
         await update.message.reply_text(message)
 
     else:
-        await query.message.reply_text('У вас нет доступа к этой функции')
+        await context.bot.send_message(chat_id=update.effective_chat.id, text="У вас нет досттупа к этой фунции.")
     main_menu(update, context)
 
 async def create_qr_code(data):
