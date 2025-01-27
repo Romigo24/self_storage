@@ -21,4 +21,4 @@ qrcode==8.0
 django-celery-beat==2.7.0
 pillow==11.1.0
 celery==5.4.0
-gunicorn=23.0.0
+gunicorn==23.0.0
