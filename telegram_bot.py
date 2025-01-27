@@ -186,7 +186,7 @@ async def count_clicks(update: Update, context: CallbackContext):
         await query.message.reply_text(f'По вашей ссылке перешли {number_of_clicks} раз')
     else:
         await query.message.reply_text('У вас нет доступа к этой функции')
-    main_menu(update, context)
+    await main_menu(update, context)
 
 
 async def show_expired_orders(update: Update, context: CallbackContext):
@@ -256,7 +256,7 @@ async def get_qr_code(update: Update, context: CallbackContext):
         await query.message.reply_text(text='Ваш заказ завершен.')
         order.status = 'COMPLETED'
         order.save()
-    main_menu(update, context)
+    await main_menu(update, context)
 
 
 async def start_name_input(update: Update, context: CallbackContext):
