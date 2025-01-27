@@ -270,6 +270,9 @@ async def start_name_input(update: Update, context: CallbackContext):
 def get_client(telegram_id):
     return Clients.objects.get(telegram_id=telegram_id)
 
+@sync_to_async
+def get_order(current_date):
+    return Order.objects.filter(expires_at__lt=current_date, status='EXPIRED')
 async def name_input(update: Update, context: CallbackContext):
     user_name = update.message.text
     chat_id = update.message.chat.id
