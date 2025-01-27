@@ -16,7 +16,7 @@ from storage.models import Warehouse, Clients, Order
 
 NAME, PHONE, EMAIL = range(3)
 
-def start(update: Update, context: CallbackContext):
+async def start(update: Update, context: CallbackContext):
     chat_id = update.effective_chat.id
     text = """В наше время, когда пространство в квартирах становится все более ограниченным, многие люди сталкиваются с проблемой хранения сезонных вещей. Склад для хранения может стать отличным решением для тех, кто хочет освободить место в доме, не избавляясь от своих вещей.
 
@@ -43,7 +43,7 @@ def start(update: Update, context: CallbackContext):
     context.bot.send_message(chat_id=chat_id, text=text, reply_markup=reply_markup)
 
 
-def consent_personal_data(update: Update, context: CallbackContext):
+async def consent_personal_data(update: Update, context: CallbackContext):
     query = update.callback_query
     await query.answer()
 
@@ -54,7 +54,7 @@ def consent_personal_data(update: Update, context: CallbackContext):
     await context.bot.send_message(chat_id=query.message.chat.id, text=text, reply_markup=reply_markup)
 
 
-def send_consents(update: Update, context: CallbackContext):
+async def send_consents(update: Update, context: CallbackContext):
     query = update.callback_query
     await query.answer()
 
@@ -67,7 +67,7 @@ def send_consents(update: Update, context: CallbackContext):
     await context.bot.send_message(chat_id=query.message.chat.id, text=text, reply_markup=reply_markup)
 
 
-def main_menu(update: Update, context: CallbackContext):
+async def main_menu(update: Update, context: CallbackContext):
     query = update.callback_query
     await query.answer()
 
@@ -84,7 +84,7 @@ def main_menu(update: Update, context: CallbackContext):
     await context.bot.send_message(chat_id=query.message.chat.id, text=text, reply_markup=reply_markup)
 
 
-def tariffs(update: Update, context: CallbackContext):
+async def tariffs(update: Update, context: CallbackContext):
     query = update.callback_query
     await query.answer()
 
@@ -97,7 +97,7 @@ def tariffs(update: Update, context: CallbackContext):
     await query.message.reply_text(tariffs_message)
     main_menu(update, context)
 
-def rules(update: Update, context: CallbackContext):
+async def rules(update: Update, context: CallbackContext):
     query = update.callback_query
     await query.answer()
 
@@ -123,7 +123,7 @@ def rules(update: Update, context: CallbackContext):
     await context.bot.send_message(chat_id=query.message.chat.id, text=text, reply_markup=reply_markup)
 
 
-def make_order(update: Update, context: CallbackContext):
+async def make_order(update: Update, context: CallbackContext):
     query = update.callback_query
     await query.answer()
 
@@ -148,7 +148,7 @@ def make_order(update: Update, context: CallbackContext):
     await context.bot.send_message(chat_id=query.message.chat.id, text=text, reply_markup=reply_markup)
 
 
-def check_client(update: Update, context: CallbackContext):
+async def check_client(update: Update, context: CallbackContext):
     query = update.callback_query
     await query.answer()
     telegram_id = query.from_user.id
@@ -164,7 +164,7 @@ def check_client(update: Update, context: CallbackContext):
         address_input(update, context)
 
 
-def count_clicks(update: Update, context: CallbackContext):
+async def count_clicks(update: Update, context: CallbackContext):
     query = update.callback_query
     await query.answer()
 
@@ -187,7 +187,7 @@ def count_clicks(update: Update, context: CallbackContext):
         await query.message.reply_text('У вас нет доступа к этой функции')
     main_menu(update, context)
 
-def show_expired_orders(update: Update, context: CallbackContext):
+async def show_expired_orders(update: Update, context: CallbackContext):
     query = update.callback_query
     await query.answer()
 
@@ -213,7 +213,7 @@ def show_expired_orders(update: Update, context: CallbackContext):
         await query.message.reply_text('У вас нет доступа к этой функции')
     main_menu(update, context)
 
-def create_qr_code(data):
+async def create_qr_code(data):
     qr = qrcode.QRCode(
         version=1,
         error_correction=qrcode.constants.ERROR_CORRECT_L,
@@ -229,7 +229,7 @@ def create_qr_code(data):
     output.seek(0)
     return output
 
-def get_qr_code(update: Update, context: CallbackContext):
+async def get_qr_code(update: Update, context: CallbackContext):
     query = update.callback_query
     await query.answer()
 
@@ -256,7 +256,7 @@ def get_qr_code(update: Update, context: CallbackContext):
     main_menu(update, context)
 
 
-def start_name_input(update: Update, context: CallbackContext):
+async def start_name_input(update: Update, context: CallbackContext):
     chat_id = update.callback_query.message.chat.id
     text = 'Пожалуйста введите ваше ФИО'
     await context.bot.send_message(chat_id=chat_id, text=text)
@@ -264,7 +264,7 @@ def start_name_input(update: Update, context: CallbackContext):
     return NAME
 
 
-def name_input(update: Update, context: CallbackContext):
+async def name_input(update: Update, context: CallbackContext):
     user_name = update.message.text
     chat_id = update.message.chat.id
 
@@ -275,7 +275,7 @@ def name_input(update: Update, context: CallbackContext):
     return PHONE
 
 
-def phone_input(update: Update, context: CallbackContext):
+async def phone_input(update: Update, context: CallbackContext):
     user_phone = update.message.text
     chat_id = update.message.chat.id
 
@@ -285,14 +285,14 @@ def phone_input(update: Update, context: CallbackContext):
     return EMAIL
 
 
-def email_input(update: Update, context: CallbackContext):
+async def email_input(update: Update, context: CallbackContext):
     user_email = update.message.text
 
     context.user_data['email'] = user_email
     check_personal_data(update, context)
 
 
-def check_personal_data(update: Update, context: CallbackContext):
+async def check_personal_data(update: Update, context: CallbackContext):
     chat_id = update.message.chat.id
 
     user_name = context.user_data['name']
@@ -316,7 +316,7 @@ def check_personal_data(update: Update, context: CallbackContext):
     await context.bot.send_message(chat_id=chat_id, text=text, reply_markup=reply_markup)
 
 
-def save_personal_data(update: Update, context: CallbackContext):
+async def save_personal_data(update: Update, context: CallbackContext):
     user_name = context.user_data.get('name')
     user_phone = context.user_data.get('phone')
     user_telegram_id = context.user_data.get('tg_id')
@@ -337,7 +337,7 @@ def save_personal_data(update: Update, context: CallbackContext):
     return create_order(update, context)
 
 
-def address_input(update: Update, context: CallbackContext):
+async def address_input(update: Update, context: CallbackContext):
     chat_id = update.callback_query.message.chat.id
     keyboard = [[InlineKeyboardButton("Главное меню", callback_data='main_menu')]]
     reply_markup = InlineKeyboardMarkup(keyboard)
