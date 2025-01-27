@@ -195,7 +195,7 @@ async def show_expired_orders(update: Update, context: CallbackContext):
 
     if update.effective_user.id == int(os.environ['OWNER_ID']):
         current_date = timezone.now()
-        expired_orders = await Order.objects.filter(expires_at__lt=current_date, status='EXPIRED')
+        expired_orders = await get_order(current_date)
 
         if not expired_orders.exists():
             chat_id = update.effective_chat.id
