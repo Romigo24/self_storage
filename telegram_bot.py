@@ -186,7 +186,7 @@ async def count_clicks(update: Update, context: CallbackContext):
     else:
         await query.message.reply_text('У вас нет доступа к этой функции')
     main_menu(update, context)
-
+@sync_to_async
 async def show_expired_orders(update: Update, context: CallbackContext):
     query = update.callback_query
     await query.answer()
@@ -229,11 +229,12 @@ async def create_qr_code(data):
     output.seek(0)
     return output
 
+@sync_to_async
 async def get_qr_code(update: Update, context: CallbackContext):
     query = update.callback_query
     await query.answer()
 
-    user_id = query.from_user.id
+    user_id = update.effective_user.id
     try:
         client = Clients.objects.get(telegram_id=user_id)
     except Clients.DoesNotExist:
