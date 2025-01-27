@@ -7,7 +7,7 @@ import qrcode
 from io import BytesIO
 from urllib.parse import urlparse
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import Updater, CommandHandler, CallbackContext, CallbackQueryHandler, ConversationHandler, MessageHandler, filters
+from telegram.ext import ApplicationBuilder, CommandHandler, CallbackContext, CallbackQueryHandler, ConversationHandler, MessageHandler, filters
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'self_storage.settings')
 django.setup()
@@ -349,8 +349,7 @@ def main():
     load_dotenv()
     TELEGRAM_TOKEN = os.environ['TELEGRAM_TOKEN']
 
-    updater = Updater(TELEGRAM_TOKEN)
-    dp = updater.dispatcher
+    dp = ApplicationBuilder().token(TELEGRAM_TOKEN).build()
 
     conv_handler = ConversationHandler(
         entry_points=[CallbackQueryHandler(start_name_input, pattern='free_delivery')],
