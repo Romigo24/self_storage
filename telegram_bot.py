@@ -199,7 +199,7 @@ async def show_expired_orders(update: Update, context: CallbackContext):
 
         if not expired_orders.exists():
             chat_id = update.effective_chat.id
-            await context.bot.send_message(chat_id=chat_id, text='Нет просроченных заказов')
+            await context.bot.send_message(chat_id=update.effective_chat.id, text='Нет просроченных заказов')
             return main_menu(update, context)
 
         message = "Просроченные заказы:\n"
@@ -209,7 +209,7 @@ async def show_expired_orders(update: Update, context: CallbackContext):
                         f"Номер телефона: {order.user.phone_number}\n"
                         f"(Срок: {order.expires_at.strftime('%d.%m.%Y')})\n\n")
 
-        await query.message.reply_text(message)
+        await update.message.reply_text(message)
 
     else:
         await query.message.reply_text('У вас нет доступа к этой функции')
@@ -273,6 +273,7 @@ def get_client(telegram_id):
 @sync_to_async
 def get_order(current_date):
     return Order.objects.filter(expires_at__lt=current_date, status='EXPIRED')
+
 async def name_input(update: Update, context: CallbackContext):
     user_name = update.message.text
     chat_id = update.message.chat.id
